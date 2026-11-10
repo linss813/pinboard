@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1d2129" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <title>协作白板 · Pinboard</title>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3h6l-1.2 5 2.8 2.8H7.4L10.2 8 9 3Z"/>
+            <path d="M12 10.8V21"/>
+          </svg>
+        </div>
+        <b data-i18n="app.brand">协作白板</b>
+        <span class="badge">PINBOARD</span>
+        <span id="connState" class="conn is-waiting"><i></i><span>连接中</span></span>
+      </div>
+
+      <div class="title-wrap">
+        <input id="roomTitle" class="room-title" maxlength="60" data-i18n-aria="room.titleAria" data-i18n-placeholder="room.titlePlaceholder" aria-label="画板名称" placeholder="未命名画板" />
+      </div>
+
+      <div class="tools" id="toolbar" role="toolbar" data-i18n-aria="tools.aria" aria-label="Tools">
+        <button class="tbtn active" data-tool="select" data-i18n-title="tool.selectTitle" data-i18n-aria="tool.select" title="选择 / 框选 (V)" aria-label="选择工具">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3l7.5 18 2.4-7.1L21 11.5z"/></svg>
+          <span class="kbd">V</span>
+        </button>
+        <button class="tbtn" data-tool="lasso" data-i18n-title="tool.lassoTitle" data-i18n-aria="tool.lasso" title="曲线套索 (S)" aria-label="曲线套索">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 12.4c0 3.9-3.4 6.8-7.9 6.8-2.2 0-4.2-.7-5.7-1.9-2.2.4-4-.7-4.2-2.4-.2-1.4.8-2.7 2.4-3.2-.2-.7-.2-1.4-.2-2.1C4.6 5.8 8.1 3 12.6 3s7.6 3.4 7.6 9.4Z"/><path d="M7.2 15.4c1.2.8 3 1.3 4.9 1.3 3.1 0 5.6-1.7 5.6-3.8 0-2-2.2-3.6-5.1-3.6-3 0-5.5 1.5-5.5 3.4 0 .7.3 1.4.9 2"/></svg>
+          <span class="kbd">S</span>
+        </button>
+        <button class="tbtn" data-tool="note" data-i18n-title="tool.noteTitle" data-i18n-aria="tool.note" title="便签 (N)" aria-label="便签工具">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v11l-5 5H4z"/><path d="M20 15h-5v5"/></svg>
+          <span class="kbd">N</span>
+        </button>
+        <button class="tbtn" data-tool="text" data-i18n-title="tool.textTitle" data-i18n-aria="tool.text" title="文本 (T)" aria-label="文本工具">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14M12 5v14M8.5 19h7"/></svg>
+          <span class="kbd">T</span>
+        </button>
+        <button class="tbtn" data-action="image" data-i18n-title="tool.imageTitle" data-i18n-aria="tool.image" title="添加图片 (I)" aria-label="添加图片">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.6"/><path d="M21 16l-5-5-6 6-3-2-4 4"/></svg>
+          <span class="kbd">I</span>
+        </button>
+        <button class="tbtn" data-tool="pen" data-i18n-title="tool.penTitle" data-i18n-aria="tool.pen" title="画笔 (P)" aria-label="画笔工具">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/><path d="M14 6l4 4"/></svg>
+          <span class="kbd">P</span>
+        </button>
+        <button class="tbtn" data-tool="eraser" data-i18n-title="tool.eraserTitle" data-i18n-aria="tool.eraser" title="橡皮 (R)" aria-label="橡皮擦">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4.5l5 5-9.5 9.5H5v-5z"/><path d="M9 9l5 5"/><path d="M4 21h16"/></svg>
+          <span class="kbd">R</span>
+        </button>
+        <button class="tbtn" data-tool="connect" data-i18n-title="tool.connectTitle" data-i18n-aria="tool.connect" title="连线 (C)" aria-label="连线工具">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="2.2"/><circle cx="19" cy="5" r="2.2"/><path d="M6.6 17.4L17.4 6.6"/><path d="M13 6h5v5"/></svg>
+          <span class="kbd">C</span>
+        </button>
+        <button class="tbtn" data-tool="laser" data-i18n-title="tool.laserTitle" data-i18n-aria="tool.laser" title="激光笔（按住 L）" aria-label="激光笔">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="2.7"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+          <span class="kbd">L</span>
+        </button>
+      </div>
+
+      <div class="opts" id="penOpts">
+        <label data-i18n="pen.label">画笔</label>
+        <div class="pen-modes" id="penModes" role="group" data-i18n-aria="pen.styleAria" aria-label="笔刷类型">
+          <button type="button" class="pen-mode active" data-pen-style="pen" data-i18n="pen.stylePen" data-i18n-title="pen.stylePenTitle" title="钢笔" aria-pressed="true">钢笔</button>
+          <button type="button" class="pen-mode" data-pen-style="marker" data-i18n="pen.styleMarker" data-i18n-title="pen.styleMarkerTitle" title="马克笔" aria-pressed="false">马克笔</button>
+          <button type="button" class="pen-mode" data-pen-style="highlighter" data-i18n="pen.styleHighlighter" data-i18n-title="pen.styleHighlighterTitle" title="荧光笔" aria-pressed="false">荧光笔</button>
+        </div>
+        <div class="pen-sep"></div>
+        <div class="swatches" id="penSwatches"></div>
+        <input type="color" id="penCustomColor" class="pen-custom" value="#334155" data-i18n-title="pen.customColor" data-i18n-aria="pen.customColor" title="自定义颜色" aria-label="自定义画笔颜色" />
+        <div class="pen-sep"></div>
+        <input type="range" id="penWidth" min="1" max="24" value="4" step="1" data-i18n-aria="pen.widthAria" aria-label="画笔粗细" />
+        <span class="penwidth" id="penWidthLabel">4</span>
+        <div class="pen-sep"></div>
+        <div class="pressure-ctl" id="penPressureControl">
+          <label for="penPressure" data-i18n="pen.pressureLabel">压感</label>
+          <input type="range" id="penPressure" min="0" max="100" value="65" step="1" data-i18n-aria="pen.pressureAria" aria-label="压感强度" />
+          <span class="penwidth" id="penPressureLabel">65%</span>
+        </div>
+      </div>
+
+      <div class="opts" id="noteOpts">
+        <label data-i18n="note.label">便签</label>
+        <div class="swatches" id="noteSwatches"></div>
+        <input type="color" id="noteCustomColor" class="pen-custom" value="#fde68a" data-i18n-title="note.customColor" data-i18n-aria="note.customColor" title="自定义便签颜色" aria-label="自定义便签颜色" />
+      </div>
+
+      <div class="opts" id="textOpts">
+        <label data-i18n="text.label">文本</label>
+        <div class="text-sizes" id="textSizes" role="group" data-i18n-aria="text.sizeAria" aria-label="文字大小">
+          <button type="button" data-text-size="14" data-i18n-title="text.sizeS">S</button>
+          <button type="button" data-text-size="20" class="active" data-i18n-title="text.sizeM">M</button>
+          <button type="button" data-text-size="28" data-i18n-title="text.sizeL">L</button>
+          <button type="button" data-text-size="40" data-i18n-title="text.sizeXL">XL</button>
+        </div>
+        <div class="pen-sep"></div>
+        <div class="swatches" id="textSwatches"></div>
+        <input type="color" id="textCustomColor" class="pen-custom" value="#1f2937" data-i18n-title="text.customColor" data-i18n-aria="text.customColor" title="自定义文字颜色" aria-label="自定义文字颜色" />
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="head-actions">
+        <button class="hbtn" id="btnPinPanel" data-i18n-title="pinned.buttonTitle" data-i18n-aria="pinned.buttonTitle" title="已钉住的内容 (G)" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1.2 5 2.8 2.8H7.4L10.2 8 9 3Z"/><path d="M12 10.8V21"/></svg>
+          <span data-i18n="pinned.button">钉住</span>
+          <span class="count-badge" id="pinCount">0</span>
+        </button>
+        <button class="hbtn" id="btnReactions" data-i18n-title="reaction.sendTitle" data-i18n-aria="reaction.sendTitle" title="发送表情回应 (E)" aria-label="发送表情回应">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14.2c.8 1.4 2 2.1 3.5 2.1s2.7-.7 3.5-2.1"/><path d="M9 10h.01M15 10h.01" stroke-width="2.4"/></svg>
+        </button>
+        <button class="hbtn primary" id="btnShare" data-i18n-title="invite.title" title="复制邀请链接">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>
+          <span data-i18n="invite.label">邀请</span>
+        </button>
+      </div>
+
+      <div class="zoombox">
+        <button class="zbtn" id="zoomOut" data-i18n-title="zoom.out" data-i18n-aria="zoom.out" title="缩小" aria-label="缩小">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg>
+        </button>
+        <span id="zoomLabel" data-i18n-title="zoom.title" title="点击适配全部内容">100%</span>
+        <button class="zbtn" id="zoomIn" data-i18n-title="zoom.in" data-i18n-aria="zoom.in" title="放大" aria-label="放大">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button class="zbtn" id="zoomFit" data-i18n-title="zoom.fit" data-i18n-aria="zoom.fit" title="适配全部内容" aria-label="适配全部内容">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+      </div>
+
+      <div class="avatars" id="avatars" data-i18n-aria="avatars.aria" aria-label="Online members"></div>
+
+      <button class="hbtn icon-only" id="btnMenu" data-i18n-title="more.title" data-i18n-aria="more.title" title="更多" aria-label="更多操作">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="2.6"/></svg>
+      </button>
+    </header>
+
+    <main id="viewport">
+      <canvas id="board" tabindex="0" data-i18n-aria="canvas.aria" aria-label="白板画布"></canvas>
+      <div id="editor" contenteditable="true" role="textbox" aria-multiline="true" tabindex="0" spellcheck="false" data-i18n-aria="editor.aria" aria-label="编辑便签" hidden></div>
+      <textarea id="textEditor" spellcheck="false" data-i18n-aria="editor.textAria" data-i18n-placeholder="editor.textPlaceholder" aria-label="编辑文本" placeholder="输入文字…" hidden></textarea>
+      <div id="formatBar" class="format-bar" role="toolbar" data-i18n-aria="editor.toolbar" aria-label="便签格式" hidden>
+        <select id="fmtSize" class="fmt-size" data-i18n-title="editor.sizeTitle" data-i18n-aria="editor.size" title="字号" aria-label="字号">
+          <option value="s" data-i18n="editor.sizeS">小</option>
+          <option value="m" data-i18n="editor.sizeM">标准</option>
+          <option value="l" data-i18n="editor.sizeL">大</option>
+          <option value="xl" data-i18n="editor.sizeXL">特大</option>
+        </select>
+        <span class="fmt-sep"></span>
+        <button type="button" class="fmt-btn" data-fmt="bold" data-i18n-title="editor.boldTitle" data-i18n-aria="editor.bold" title="加粗 (Ctrl+B)" aria-label="加粗"><b>B</b></button>
+        <button type="button" class="fmt-btn" data-fmt="italic" data-i18n-title="editor.italicTitle" data-i18n-aria="editor.italic" title="斜体 (Ctrl+I)" aria-label="斜体"><i>I</i></button>
+        <button type="button" class="fmt-btn" data-fmt="underline" data-i18n-title="editor.underlineTitle" data-i18n-aria="editor.underline" title="下划线 (Ctrl+U)" aria-label="下划线"><u>U</u></button>
+        <button type="button" class="fmt-btn" data-fmt="strike" data-i18n-title="editor.strikeTitle" data-i18n-aria="editor.strike" title="删除线" aria-label="删除线"><s>S</s></button>
+        <span class="fmt-sep"></span>
+        <button type="button" class="fmt-btn" data-fmt="bullet" data-i18n-title="editor.bulletTitle" data-i18n-aria="editor.bullet" title="无序列表" aria-label="无序列表">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="7" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="17" r="1.2" fill="currentColor" stroke="none"/><path d="M10 7h9M10 17h9"/></svg>
+        </button>
+        <button type="button" class="fmt-btn" data-fmt="ordered" data-i18n-title="editor.orderedTitle" data-i18n-aria="editor.ordered" title="有序列表" aria-label="有序列表">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 7h9M10 17h9"/><path d="M4 5h1v4M3.5 9H6"/><path d="M3.5 14.5c0-.6.5-1 1-1s1 .4 1 1c0 1-2 1.4-2 2.5H6"/></svg>
+        </button>
+        <span class="fmt-sep"></span>
+        <button type="button" class="fmt-btn" data-fmt="align-left" data-i18n-title="editor.alignLeftTitle" data-i18n-aria="editor.alignLeft" title="左对齐" aria-label="左对齐">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 10h10M4 14h16M4 18h8"/></svg>
+        </button>
+        <button type="button" class="fmt-btn" data-fmt="align-center" data-i18n-title="editor.alignCenterTitle" data-i18n-aria="editor.alignCenter" title="居中" aria-label="居中">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 10h10M4 14h16M8 18h8"/></svg>
+        </button>
+        <button type="button" class="fmt-btn" data-fmt="align-right" data-i18n-title="editor.alignRightTitle" data-i18n-aria="editor.alignRight" title="右对齐" aria-label="右对齐">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M10 10h10M4 14h16M12 18h8"/></svg>
+        </button>
+        <span class="fmt-sep"></span>
+        <button type="button" class="fmt-btn" data-fmt="clear" data-i18n-title="editor.clearTitle" data-i18n-aria="editor.clear" title="清除格式" aria-label="清除格式">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M7 16l8.5-8.5a2.1 2.1 0 0 1 3 3L10 19H7z"/><path d="M12 11l3 3"/></svg>
+        </button>
+      </div>
+
+      <div id="minimapDock" class="minimap-dock">
+        <button class="minimap-toggle" id="btnMinimapToggle" data-i18n-title="minimap.hide" data-i18n-aria="minimap.hide" title="隐藏缩略图 (M)" aria-label="隐藏缩略图">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>
+          <span data-i18n="minimap.hideShort">隐藏</span>
+        </button>
+        <canvas id="minimap" width="210" height="146" data-i18n-aria="minimap.aria" aria-label="迷你地图"></canvas>
+      </div>
+
+      <button id="btnMinimapShow" class="minimap-show" data-i18n-title="minimap.show" data-i18n-aria="minimap.show" title="显示缩略图 (M)" aria-label="显示缩略图">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5l6-2 6 2 6-2v15l-6 2-6-2-6 2z"/><path d="M9 3.5v15M15 5.5v15"/></svg>
+      </button>
+
+      <button id="btnGuide" class="guide-fab" data-i18n-title="guide.openTitle" data-i18n-aria="guide.openTitle" aria-haspopup="dialog" aria-expanded="false" title="操作指引 (?)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5c3-.8 5.8-.5 8.5 1 2.7-1.5 5.5-1.8 8.5-1V19c-3-.8-5.8-.5-8.5 1-2.7-1.5-5.5-1.8-8.5-1z"/><path d="M12 6.5V20"/></svg>
+        <span data-i18n="guide.openLabel">操作指引</span>
+        <kbd>?</kbd>
+      </button>
+
+      <div id="followBanner" class="follow-banner" hidden>
+        <span class="follow-avatar" id="followAvatar">A</span>
+        <span class="follow-text"><span data-i18n="follow.label">正在跟随</span> <b id="followName"></b></span>
+        <button id="btnStopFollow" class="mini-btn" data-i18n="follow.exit">退出跟随</button>
+        <span class="follow-tip">Esc</span>
+      </div>
+
+      <aside id="pinnedPanel" class="pinned-panel" data-i18n-aria="pinned.panelAria" aria-label="Pinned items" hidden>
+        <div class="panel-head">
+          <div class="panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1.2 5 2.8 2.8H7.4L10.2 8 9 3Z"/><path d="M12 10.8V21"/></svg>
+            <b data-i18n="pinned.title">已钉住</b>
+            <span id="panelCount">0</span>
+          </div>
+          <button class="icon-btn" id="btnClosePanel" data-i18n-title="pinned.close" data-i18n-aria="pinned.close" aria-label="关闭" title="关闭 (Esc)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <div class="panel-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+          <input id="pinSearch" type="search" data-i18n-placeholder="pinned.search" placeholder="搜索钉住的内容…" autocomplete="off" />
+        </div>
+        <div class="panel-list" id="pinList"></div>
+        <div class="panel-empty" id="pinEmpty">
+          <div class="empty-pin">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1.2 5 2.8 2.8H7.4L10.2 8 9 3Z"/><path d="M12 10.8V21"/></svg>
+          </div>
+          <b data-i18n="pinned.emptyTitle">还没有钉住的内容</b>
+          <p data-i18n="pinned.emptyBody">选中便签或图片，点击内容顶部的图钉，把重点固定在画板上。</p>
+        </div>
+      </aside>
+
+      <div id="selectionBar" class="selection-bar" hidden>
+        <button data-sel-action="edit" class="sel-btn" data-i18n-title="selection.editTitle" title="编辑便签 (Enter)">
+          <span data-i18n="selection.edit">编辑</span>
+        </button>
+        <button data-sel-action="pin" class="sel-btn" data-i18n-title="selection.pinTitle" title="钉住 / 取消钉住 (Shift+P)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1.2 5 2.8 2.8H7.4L10.2 8 9 3Z"/><path d="M12 10.8V21"/></svg>
+          <span data-i18n="action.pin">钉住</span>
+        </button>
+        <button data-sel-action="duplicate" class="sel-btn" data-i18n-title="selection.duplicateTitle" title="复制副本 (Ctrl+D)"><span data-i18n="selection.duplicate">复制</span></button>
+        <button data-sel-action="group" class="sel-btn" data-i18n-title="selection.groupTitle" title="组合 / 取消组合 (Ctrl+G)"><span data-i18n="selection.group">组合</span></button>
+        <button data-sel-action="front" class="sel-btn" data-i18n-title="selection.frontTitle" title="移到最前"><span data-i18n="selection.front">置顶</span></button>
+        <button data-sel-action="back" class="sel-btn" data-i18n-title="selection.backTitle" title="移到最后"><span data-i18n="selection.back">置底</span></button>
+        <button data-sel-action="delete" class="sel-btn danger" data-i18n-title="selection.deleteTitle" title="删除 (Delete)"><span data-i18n="selection.delete">删除</span></button>
+      </div>
+
+      <div id="ctxMenu" class="ctx-menu" hidden></div>
+
+      <div id="reactionPalette" class="reaction-palette" hidden></div>
+
+      <div id="menu" class="dropdown" hidden>
+        <div class="menu-label" data-i18n="menu.language">语言</div>
+        <div class="lang-switch" role="group" data-i18n-aria="lang.aria" aria-label="Language">
+          <button type="button" data-lang="zh-CN">简体中文</button>
+          <button type="button" data-lang="zh-TW">繁體中文</button>
+          <button type="button" data-lang="en">English</button>
+        </div>
+        <div class="menu-sep"></div>
+        <div class="menu-label" data-i18n="menu.board">画板</div>
+        <button data-menu-action="guide"><span data-i18n="menu.guide">操作指引</span><kbd>?</kbd></button>
+        <button data-menu-action="settings"><span data-i18n="menu.settings">设置…</span></button>
+        <button data-menu-action="undo"><span data-i18n="menu.undo">撤销</span><kbd>Ctrl+Z</kbd></button>
+        <button data-menu-action="redo"><span data-i18n="menu.redo">重做</span><kbd>Ctrl+Shift+Z</kbd></button>
+        <div class="menu-sep"></div>
+        <button data-menu-action="export-png"><span data-i18n="menu.exportPng">导出 PNG</span></button>
+        <button data-menu-action="export-json"><span data-i18n="menu.exportJson">导出 JSON</span></button>
+        <button data-menu-action="import-json"><span data-i18n="menu.importJson">导入 JSON…</span></button>
+        <div class="menu-sep"></div>
+        <button data-menu-action="new-room"><span data-i18n="menu.newBoard">新建画板…</span></button>
+        <button data-menu-action="copy-link"><span data-i18n="menu.copyLink">复制邀请链接</span></button>
+      </div>
+
+      <div id="dropOverlay" class="drop-overlay" hidden data-i18n="dropOverlay">松开即可添加图片</div>
+      <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <div id="guideModal" class="modal-backdrop guide-backdrop" hidden>
+    <div class="guide-card" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+      <div class="guide-head">
+        <div>
+          <span class="guide-eyebrow">PINBOARD</span>
+          <h2 id="guideTitle" data-i18n="guide.title">操作指引</h2>
+        </div>
+        <button id="btnCloseGuide" class="icon-btn" data-i18n-title="guide.close" data-i18n-aria="guide.close" aria-label="关闭" title="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <p class="guide-intro" data-i18n="guide.intro">从创建内容、固定重点到实时协作，这些手势能帮你更快上手。</p>
+      <div id="guideSections" class="guide-grid"></div>
+      <p class="guide-language" data-i18n="guide.languageNote">界面支持简体中文、繁體中文与 English，可在「更多 → 语言」中切换。</p>
+    </div>
+  </div>
+
+  <div id="settingsModal" class="modal-backdrop settings-backdrop" hidden>
+    <div class="settings-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-head">
+        <div>
+          <span class="guide-eyebrow">PINBOARD</span>
+          <h2 id="settingsTitle" data-i18n="settings.title">设置</h2>
+        </div>
+        <button id="btnCloseSettings" class="icon-btn" data-i18n-title="settings.close" data-i18n-aria="settings.close" aria-label="关闭" title="关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="settings-list">
+        <div class="settings-row">
+          <div class="settings-copy">
+            <b data-i18n="settings.doubleClickTitle">双击便签编辑 / 新建</b>
+            <p data-i18n="settings.doubleClickDesc">默认关闭。开启后，双击便签进入编辑、双击空白处新建便签；关闭时请选中便签后按 Enter 或使用工具栏「编辑」。</p>
+          </div>
+          <label class="switch">
+            <input id="optDoubleClick" type="checkbox" role="switch" />
+            <span aria-hidden="true"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <div class="settings-copy">
+            <b data-i18n="settings.minimapTitle">显示缩略图</b>
+            <p data-i18n="settings.minimapDesc">隐藏后可通过右下角的地图按钮或 M 键恢复。</p>
+          </div>
+          <label class="switch">
+            <input id="optMinimap" type="checkbox" role="switch" />
+            <span aria-hidden="true"></span>
+          </label>
+        </div>
+      </div>
+      <p class="settings-note" data-i18n="settings.note">设置仅保存在当前浏览器。</p>
+    </div>
+  </div>
+
+  <div id="nameModal" class="modal-backdrop" hidden>
+    <form id="nameForm" class="join-card">
+      <button id="btnCloseName" type="button" class="icon-btn join-close" data-i18n-title="name.close" data-i18n-aria="name.close" aria-label="关闭" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="join-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1.2 5 2.8 2.8H7.4L10.2 8 9 3Z"/><path d="M12 10.8V21"/></svg>
+      </div>
+      <h1 id="nameModalTitle">设置分享昵称</h1>
+      <p id="nameModalSubtitle">队友会在画板、光标和成员列表里看到这个名字。</p>
+      <label for="nameInput" data-i18n="name.label">你的昵称</label>
+      <input id="nameInput" maxlength="20" autocomplete="nickname" data-i18n-placeholder="name.placeholder" placeholder="例如：阿琳" required />
+      <div class="join-room"><span data-i18n="name.room">房间</span> <code id="joinRoomId"></code></div>
+      <button type="submit" id="nameSubmit" class="primary-btn wide">保存并复制链接</button>
+      <p id="nameNote" class="join-note">昵称会保存在当前浏览器，之后分享不再询问。</p>
+    </form>
+  </div>
+
+  <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden />
+  <input id="jsonInput" type="file" accept="application/json,.json" hidden />
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

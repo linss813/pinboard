@@ -1,0 +1,13 @@
+node_modules
+dist
+server-dist
+data
+release
+tmp-prod-data
+.git
+.gitignore
+tests
+playwright-report
+test-results
+*.log
+.env

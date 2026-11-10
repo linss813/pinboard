@@ -1,0 +1,19 @@
+services:
+  pinboard:
+    build:
+      context: .
+    image: pinboard:local
+    restart: unless-stopped
+    ports:
+      - "18016:18016"
+    environment:
+      PORT: "18016"
+      DATA_DIR: /data
+      # Comma-separated allowlist of origins for WebSocket upgrades.
+      # Leave empty for self-hosted/LAN use; set it in production.
+      ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-}"
+    volumes:
+      - pinboard-data:/data
+
+volumes:
+  pinboard-data:

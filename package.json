@@ -1,0 +1,47 @@
+{
+  "name": "pinboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A realtime collaborative whiteboard with pins, presence and laser pointers.",
+  "scripts": {
+    "dev": "concurrently -k -n web,server -c cyan,green \"vite\" \"tsx watch server/index.ts\"",
+    "dev:web": "vite",
+    "dev:server": "tsx watch server/index.ts",
+    "build": "tsc --noEmit && vite build && npm run build:server",
+    "build:server": "node -e \"require('node:fs').rmSync('server-dist',{recursive:true,force:true})\" && esbuild server/index.ts --bundle --platform=node --format=cjs --outfile=server-dist/index.cjs",
+    "start": "node scripts/start-production.cjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "node tests/e2e/run.mjs",
+    "test:e2e:extended": "node tests/e2e/extended.mjs",
+    "test:e2e:offline": "node tests/e2e/offline.mjs",
+    "test:e2e:settings": "node tests/e2e/settings.mjs",
+    "test:e2e:rich": "node tests/e2e/rich-group-lasso.mjs",
+    "test:e2e:pen": "node tests/e2e/pen.mjs",
+    "test:e2e:text": "node tests/e2e/text-palette-pressure.mjs",
+    "test:e2e:ux": "node tests/e2e/reactions-guide-minimap.mjs",
+    "test:e2e:production": "node tests/e2e/production.mjs",
+    "test:server": "node tests/server/persistence.mjs"
+  },
+  "dependencies": {
+    "@noble/hashes": "^2.0.1",
+    "lib0": "^0.2.119",
+    "ws": "^8.18.3",
+    "y-indexeddb": "^9.0.12",
+    "y-protocols": "^1.0.7",
+    "y-websocket": "^3.1.0",
+    "yjs": "^13.6.33"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/ws": "^8.18.1",
+    "concurrently": "^9.2.1",
+    "esbuild": "^0.28.2",
+    "playwright-core": "^1.64.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0",
+    "vitest": "^3.2.4"
+  }
+}
